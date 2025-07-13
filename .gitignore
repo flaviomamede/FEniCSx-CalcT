@@ -1,0 +1,44 @@
+# Ambiente virtual Python
+fenics_env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Arquivos de resultado
+CalcT/resultados/
+exemplos/resultados_*/
+*.h5
+*.xdmf
+*.pvd
+*.vtu
+*.db
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.log
+*.out
+*.swp
+*.swo
+*~
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db 

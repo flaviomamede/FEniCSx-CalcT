@@ -1,0 +1,226 @@
+# Configuração do problema de elementos finitos - VERSÃO MELHORADA
+
+# Bloco de configurações gerais
+general:
+  tipo_problema: "termico_transiente"
+  tempo_final: 864000 # segundos (10 dias)
+  delta_t: 8640 # segundos (1 dia)
+  delta_t_refinado: 600 # segundos (1 hora)
+  theta: 0.5 # método de Crank-Nicolson
+  tolerancia: 1e-3
+  max_iteracoes: 10
+  mesh_file: barragem1.xdmf
+  output_dir: resultados
+  arquivo_saida: "resultados_simulacao.vtk"
+
+# Definição das CAMADA_MATERIAL
+camadas_material:
+  - nome: "camada_material_1"
+    camada: "camada_1"
+    material: "fundacao"
+    temperatura_inicial: 20.0 # °C
+
+  - nome: "camada_material_2"
+    camada: "camada_1" 
+    material: "fundacao"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_3"
+    camada: "camada_1"
+    material: "fundacao"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_4"
+    camada: "camada_1" 
+    material: "fundacao"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_5"
+    camada: "camada_1"
+    material: "concreto_face"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_6"
+    camada: "camada_1" 
+    material: "concreto_massa"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_7"
+    camada: "camada_2"
+    material: "concreto_face"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_8"
+    camada: "camada_2" 
+    material: "concreto_massa"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_9"
+    camada: "camada_3"
+    material: "concreto_face"
+    temperatura_inicial: 20.0 # °C
+  
+  - nome: "camada_material_10"
+    camada: "camada_3" 
+    material: "concreto_massa"
+    temperatura_inicial: 20.0 # °C
+  
+# Definição das CAMADAS
+camadas:
+  - nome: "camada_1"
+    birth: 0.0 # tempo inicial (s)
+    death: null # null indica que não há death
+  
+  - nome: "camada_2"
+    birth: 172800 # entra após 2 dias (s)
+    death: null
+
+  - nome: "camada_3"
+    birth: 345600 # entra após 4 dias (s)
+    death: null
+
+# Definição dos MATERIAIS
+materiais:
+  - nome: "concreto_massa"
+    tipo: "concreto"
+    densidade: 2400.0 # kg/m³
+    condutividade_termica: 2.0 # W/(m⋅K)
+    calor_especifico: 900.0 # J/(kg⋅K)
+    hgen:
+      gera_calor: True  # Este material tem geração interna
+      par_gera_calor: {dTadinfty: 30, a_dias: 1.5, expoente: 2.0, tipo: "Hill_function"}
+      termoactivation: True
+      tipo: "arrhenius"
+      EaR: 4000.0 # Energia de ativação / Constante dos gases (K)
+      Tref: 20.0 # grausC
+
+  - nome: "concreto_face"
+    tipo: "concreto"
+    densidade: 2400.0 # kg/m³
+    condutividade_termica: 2.0 # W/(m⋅K)
+    calor_especifico: 900.0 # J/(kg⋅K)
+    hgen:
+      gera_calor: True  # Este material tem geração interna
+      par_gera_calor: {dTadinfty: 30, a_dias: 1.5, expoente: 2.0, tipo: "Hill_function"}
+      termoactivation: False  # Este material NÃO tem termoactivation
+      tipo: "arrhenius"
+      EaR: 4000.0 # Energia de ativação / Constante dos gases (K)
+      Tref: 20.0 # grausC
+
+  - nome: "fundacao"
+    tipo: "inerte"
+    densidade: 2400.0 # kg/m³
+    condutividade_termica: 2.0 # W/(m⋅K)
+    calor_especifico: 900.0 # J/(kg⋅K)
+    hgen:
+      gera_calor: False  # Este material NÃO tem geração interna
+
+# Definição dos CONTORNOS - VERSÃO MELHORADA com controle explícito de desativação
+contornos:
+  - nome: "ISOLAMENTO_PERFEITO"
+    id: 11
+    nasce_com_camada: "camada_1"
+    # Nunca é desativado - contorno permanente
+    tipo: "fluxo"
+    material: "espelho"
+    h: 0.0 # °C
+    t_ext: n.a # não se aplica
+
+  - nome: "FUNDACAO_TOPO"
+    id: 12
+    nasce_com_camada: "camada_1"
+    # Nunca é desativado - contorno permanente
+    tipo: "conveccao"
+    material: "concreto-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "FACE_MONTANTE_1"
+    id: 13
+    nasce_com_camada: "camada_1"
+    # Nunca é desativado - contorno permanente
+    tipo: "conveccao"
+    material: "concreto-forma-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "FACE_JUSANTE_1"
+    id: 14
+    nasce_com_camada: "camada_1"
+    # Nunca é desativado - contorno permanente
+    tipo: "conveccao"
+    material: "concreto-forma-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "FACE_MONTANTE_2"
+    id: 15
+    nasce_com_camada: "camada_2"
+    # Nunca é desativado - contorno permanente
+    tipo: "conveccao"
+    material: "concreto-forma-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "FACE_JUSANTE_2"
+    id: 16
+    nasce_com_camada: "camada_2"
+    # Nunca é desativado - contorno permanente
+    tipo: "conveccao"
+    material: "concreto-forma-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "FACE_MONTANTE_3"
+    id: 17
+    nasce_com_camada: "camada_3"
+    # Nunca é desativado - contorno permanente
+    tipo: "conveccao"
+    material: "concreto-forma-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "FACE_JUSANTE_3"
+    id: 18
+    nasce_com_camada: "camada_3"
+    # Nunca é desativado - contorno permanente
+    tipo: "conveccao"
+    material: "concreto-forma-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "FACE_TOPO"
+    id: 19
+    nasce_com_camada: "camada_3"
+    # Nunca é desativado - contorno permanente (topo final)
+    tipo: "conveccao"
+    material: "concreto-agua-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "interface_1_2"
+    id: 20
+    nasce_com_camada: "camada_1"
+    desativado_pela_camada: "camada_2"  # <-- NOVA CHAVE! Interface coberta pela camada 2
+    tipo: "conveccao"
+    material: "concreto-agua-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+  - nome: "interface_2_3"
+    id: 21
+    nasce_com_camada: "camada_2"
+    desativado_pela_camada: "camada_3"  # <-- NOVA CHAVE! Interface coberta pela camada 3
+    tipo: "conveccao"
+    material: "concreto-agua-ar"
+    h: 8.0 # W/(m²⋅K)
+    t_ext: 25.0 # °C
+
+# Configurações de pós-processamento
+pos_processamento:
+  pontos_monitoramento:
+    - {x: 2.0, y: 1.25, z: 0.0, nome: "centro_bloco1"}
+    - {x: 2.0, y: 3.75, z: 0.0, nome: "centro_bloco2"}
+    - {x: 2.0, y: 6.25, z: 0.0, nome: "centro_bloco3"}
+  intervalos_saida: 3600 # a cada hora
+  variaveis: ["temperatura", "tempo_equivalente"] 
