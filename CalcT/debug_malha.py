@@ -1,6 +1,9 @@
 import numpy as np
 from mpi4py import MPI
 from dolfinx import io
+import sys
+import os
+from dolfinx.mesh import exterior_facet_indices
 
 def gerar_resumo_malha(xdmf_file):
     """
@@ -29,12 +32,28 @@ def gerar_resumo_malha(xdmf_file):
             num_facets = mesh.topology.index_map(tdim - 1).size_local
             num_nodes = mesh.topology.index_map(0).size_local
 
+            # Garantir conectividade facet-to-cell
+            mesh.topology.create_connectivity(tdim - 1, tdim)
+            # Contar facetas de contorno (boundary)
+            boundary_facets = exterior_facet_indices(mesh.topology)
+            num_boundary_facets = len(boundary_facets)
+
+            # Facetas associadas aos Physical Groups de contorno
+            num_facetas_pg_contorno = len(facet_tags.indices)
+            print(f"Número de facetas associadas aos Physical Groups de contorno: {num_facetas_pg_contorno}")
+            # Detalhar por tag
+            if num_facetas_pg_contorno > 0:
+                unique_tags, counts = np.unique(facet_tags.values, return_counts=True)
+                print("Facetas por tag de contorno:")
+                for tag, count in zip(unique_tags, counts):
+                    print(f"  Tag {tag}: {count} facetas")
 
             print("\n[INFORMAÇÕES GERAIS DA MALHA]")
             print(f"Dimensão da topologia (gdim): {mesh.geometry.dim}")
             print(f"Dimensão topológica (tdim): {tdim}")
             print(f"Número total de células (elementos de domínio): {num_cells}")
             print(f"Número total de facetas (elementos de contorno): {num_facets}")
+            print(f"Número de facetas de contorno (boundary): {num_boundary_facets}")
             print(f"Número total de nós: {num_nodes}")
 
             print("\n[PHYSICAL GROUPS - DOMÍNIOS (CELLS/SURFACES)]")
@@ -56,6 +75,14 @@ def gerar_resumo_malha(xdmf_file):
         print("Verifique se os nomes 'malha', 'malha_cells' e 'malha_facets' estão corretos.")
 
 if __name__ == "__main__":
-    # Nome do seu arquivo XDMF principal
-    arquivo_malha = "barragem1.xdmf"
+    if len(sys.argv) < 2:
+        print("Uso: python debug_malha.py <caso>")
+        print("Exemplo: python debug_malha.py barragem2")
+        sys.exit(1)
+    caso = sys.argv[1]
+    # Caminho para o arquivo dentro da subpasta do caso
+    arquivo_malha = os.path.join(caso, f"{caso}.xdmf")
+    if not os.path.isfile(arquivo_malha):
+        print(f"Arquivo {arquivo_malha} não encontrado.")
+        sys.exit(1)
     gerar_resumo_malha(arquivo_malha)
