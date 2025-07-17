@@ -1,12 +1,12 @@
 # LOG DE EXECUÇÃO - SIMULAÇÃO DE BARRAGEM
-# Data: 2025-07-15 23:01:46
+# Data: 2025-07-16 12:34:50
 
 ================================================================================
 🏗️  INICIALIZANDO SIMULAÇÃO DE BARRAGEM STAGE-WISE COM FENICSx (R2)
 ================================================================================
 🔄 Carregando configuração de 'barragem2/barragem2.yaml' e análise de 'barragem2/barragem2-xdmf.json'...
    ✅ Configuração carregada com sucesso.
-   🌡️ Temperatura Inicial Padrão: 20.0°C
+   🌡️ Temperatura Inicial Padrão: 21.0°C
    📁 Diretório de Saída: barragem2/resultados
 
 --- FASE DE CONFIGURAÇÃO ---
@@ -27,15 +27,15 @@
       - Material 'concreto_face' atribuído a 8 elementos no PG 9.
       - Material 'concreto_massa' atribuído a 8 elementos no PG 10.
    ✅ Propriedades atribuídas. Verificação em: 'barragem2/barragem2-mat.xdmf'
-   ➡️  Aplicando condições iniciais...
 
 --- FASE DE SIMULAÇÃO ---
 
 ================================================================================
-📦 PROCESSANDO BLOCO CONSTRUTIVO 1
+📦 PROCESSANDO BLOCO 1
    - Período: 0.0h a 48.0h
    - Pontos temporais: 23
 ================================================================================
+   💾 Salvando passo 0 (t=0.00h)...
 
 [Passo 1] Tempo: 0.17 h (dt = 0.17 h)
    - Calculando tempo equivalente (explícito)...
@@ -571,7 +571,7 @@
    💾 Salvando passo 22 (t=48.00h)...
 
 ================================================================================
-📦 PROCESSANDO BLOCO CONSTRUTIVO 2
+📦 PROCESSANDO BLOCO 2
    - Período: 48.0h a 96.0h
    - Pontos temporais: 23
 ================================================================================
@@ -1110,7 +1110,7 @@
    💾 Salvando passo 44 (t=96.00h)...
 
 ================================================================================
-📦 PROCESSANDO BLOCO CONSTRUTIVO 3
+📦 PROCESSANDO BLOCO 3
    - Período: 96.0h a 240.0h
    - Pontos temporais: 62
 ================================================================================
@@ -1124,7 +1124,7 @@
      -> 🔍 Diagnóstico: dt=600.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 28205.16]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 26212.80]°C
 
 [Passo 46] Tempo: 98.40 h (dt = 2.23 h)
    - Calculando tempo equivalente (explícito)...
@@ -1135,7 +1135,7 @@
      -> 🔍 Diagnóstico: dt=8040.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 431941.92]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 419748.61]°C
 
 [Passo 47] Tempo: 100.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1146,7 +1146,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 857535.04]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 835433.07]°C
 
 [Passo 48] Tempo: 103.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1157,7 +1157,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 1274699.36]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 1243657.67]°C
 
 [Passo 49] Tempo: 105.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1168,7 +1168,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 1683619.01]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 1644520.61]°C
    💾 Salvando passo 49 (t=105.60h)...
 
 [Passo 50] Tempo: 108.00 h (dt = 2.40 h)
@@ -1180,7 +1180,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 2084474.63]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 2038124.61]°C
 
 [Passo 51] Tempo: 110.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1191,7 +1191,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 2477443.38]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 2424576.11]°C
 
 [Passo 52] Tempo: 112.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1202,7 +1202,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 2862698.90]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 2803984.58]°C
 
 [Passo 53] Tempo: 115.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1213,7 +1213,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 3240411.33]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 3176461.85]°C
 
 [Passo 54] Tempo: 117.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1224,7 +1224,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 3610747.32]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 3542121.53]°C
    💾 Salvando passo 54 (t=117.60h)...
 
 [Passo 55] Tempo: 120.00 h (dt = 2.40 h)
@@ -1236,7 +1236,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 3973870.02]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 3901078.55]°C
 
 [Passo 56] Tempo: 122.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1247,7 +1247,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 4329939.15]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 4253448.69]°C
 
 [Passo 57] Tempo: 124.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1258,7 +1258,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 4679110.98]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 4599348.21]°C
 
 [Passo 58] Tempo: 127.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1269,7 +1269,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 5021538.38]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 4938893.47]°C
 
 [Passo 59] Tempo: 129.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1280,7 +1280,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 5357370.88]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 5272200.68]°C
    💾 Salvando passo 59 (t=129.60h)...
 
 [Passo 60] Tempo: 132.00 h (dt = 2.40 h)
@@ -1292,7 +1292,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 5686754.68]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 5599385.62]°C
 
 [Passo 61] Tempo: 134.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1303,7 +1303,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 6009832.70]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 5920563.41]°C
 
 [Passo 62] Tempo: 136.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1314,7 +1314,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 6326744.65]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 6235848.33]°C
 
 [Passo 63] Tempo: 139.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1325,7 +1325,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 6637627.04]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 6545353.63]°C
 
 [Passo 64] Tempo: 141.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1336,7 +1336,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 6942613.28]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 6849191.40]°C
    💾 Salvando passo 64 (t=141.60h)...
 
 [Passo 65] Tempo: 144.00 h (dt = 2.40 h)
@@ -1348,7 +1348,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 7241833.70]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 7147472.45]°C
 
 [Passo 66] Tempo: 146.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1359,7 +1359,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 7535415.60]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 7440306.17]°C
 
 [Passo 67] Tempo: 148.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1370,7 +1370,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 7823483.33]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 7727800.50]°C
 
 [Passo 68] Tempo: 151.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1381,7 +1381,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 8106158.35]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 8010061.82]°C
 
 [Passo 69] Tempo: 153.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1392,7 +1392,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 8383559.25]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 8287194.87]°C
    💾 Salvando passo 69 (t=153.60h)...
 
 [Passo 70] Tempo: 156.00 h (dt = 2.40 h)
@@ -1404,7 +1404,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 8655801.84]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 8559302.77]°C
 
 [Passo 71] Tempo: 158.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1415,7 +1415,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 8922999.21]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 8826486.90]°C
 
 [Passo 72] Tempo: 160.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1426,7 +1426,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 9185261.76]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 9088846.91]°C
 
 [Passo 73] Tempo: 163.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1437,7 +1437,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 9442697.29]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 9346480.73]°C
 
 [Passo 74] Tempo: 165.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1448,7 +1448,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 9695411.02]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 9599484.47]°C
    💾 Salvando passo 74 (t=165.60h)...
 
 [Passo 75] Tempo: 168.00 h (dt = 2.40 h)
@@ -1460,7 +1460,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 9943505.69]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 9847952.50]°C
 
 [Passo 76] Tempo: 170.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1471,7 +1471,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 10187081.59]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 10091977.40]°C
 
 [Passo 77] Tempo: 172.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1482,7 +1482,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 10426236.62]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 10331649.97]°C
 
 [Passo 78] Tempo: 175.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1493,7 +1493,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 10661066.34]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 10567059.22]°C
 
 [Passo 79] Tempo: 177.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1504,7 +1504,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 10891664.04]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 10798292.43]°C
    💾 Salvando passo 79 (t=177.60h)...
 
 [Passo 80] Tempo: 180.00 h (dt = 2.40 h)
@@ -1516,7 +1516,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 11136793.40]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 11030215.81]°C
 
 [Passo 81] Tempo: 182.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1527,7 +1527,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 11405984.85]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 11299196.70]°C
 
 [Passo 82] Tempo: 184.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1538,7 +1538,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 11672430.51]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 11565501.29]°C
 
 [Passo 83] Tempo: 187.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1549,7 +1549,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 11936148.66]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 11829144.00]°C
 
 [Passo 84] Tempo: 189.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1560,7 +1560,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 12197158.56]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 12090140.42]°C
    💾 Salvando passo 84 (t=189.60h)...
 
 [Passo 85] Tempo: 192.00 h (dt = 2.40 h)
@@ -1572,7 +1572,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 12455480.36]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 12348507.20]°C
 
 [Passo 86] Tempo: 194.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1583,7 +1583,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 12711134.95]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 12604261.92]°C
 
 [Passo 87] Tempo: 196.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1594,7 +1594,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 12964143.96]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 12860971.49]°C
 
 [Passo 88] Tempo: 199.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1605,7 +1605,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 13214529.60]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 13121834.36]°C
 
 [Passo 89] Tempo: 201.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1616,7 +1616,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 13467722.26]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 13380625.90]°C
    💾 Salvando passo 89 (t=201.60h)...
 
 [Passo 90] Tempo: 204.00 h (dt = 2.40 h)
@@ -1628,7 +1628,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 13724338.29]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 13637359.45]°C
 
 [Passo 91] Tempo: 206.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1639,7 +1639,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 13978879.71]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 13892048.50]°C
 
 [Passo 92] Tempo: 208.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1650,7 +1650,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 14231361.86]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 14144706.67]°C
 
 [Passo 93] Tempo: 211.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1661,7 +1661,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 14481800.07]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 14395347.71]°C
 
 [Passo 94] Tempo: 213.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1672,7 +1672,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 14730209.75]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 14643985.49]°C
    💾 Salvando passo 94 (t=213.60h)...
 
 [Passo 95] Tempo: 216.00 h (dt = 2.40 h)
@@ -1684,7 +1684,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 14976606.32]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 14890634.00]°C
 
 [Passo 96] Tempo: 218.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1695,7 +1695,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 15221005.25]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 15135307.33]°C
 
 [Passo 97] Tempo: 220.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1706,7 +1706,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 15463422.01]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 15378019.67]°C
 
 [Passo 98] Tempo: 223.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1717,7 +1717,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 15703872.12]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 15618785.29]°C
 
 [Passo 99] Tempo: 225.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1728,7 +1728,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 15942371.11]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 15857618.54]°C
    💾 Salvando passo 99 (t=225.60h)...
 
 [Passo 100] Tempo: 228.00 h (dt = 2.40 h)
@@ -1740,7 +1740,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 16178934.51]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 16094533.86]°C
 
 [Passo 101] Tempo: 230.40 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1751,7 +1751,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 16413577.89]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 16329545.72]°C
 
 [Passo 102] Tempo: 232.80 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1762,7 +1762,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 16646316.79]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 16562668.69]°C
 
 [Passo 103] Tempo: 235.20 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1773,7 +1773,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 16877166.77]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 16793917.34]°C
 
 [Passo 104] Tempo: 237.60 h (dt = 2.40 h)
    - Calculando tempo equivalente (explícito)...
@@ -1784,7 +1784,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 17106143.37]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 17030248.37]°C
    💾 Salvando passo 104 (t=237.60h)...
 
 [Passo 105] Tempo: 240.00 h (dt = 2.40 h)
@@ -1796,7 +1796,7 @@
      -> 🔍 Diagnóstico: dt=8640.00s, theta=0.5
      -> 🔍 Elementos ativos: 80
      -> 🔍 BCs aplicadas: 9 condições de contorno
-     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [20.00, 17339346.60]°C
+     -> ✅ Convergência com 'GMRES+ILU (conservador)'. Range T: [21.00, 17270757.63]°C
    💾 Salvando passo 105 (t=240.00h)...
 
 ================================================================================

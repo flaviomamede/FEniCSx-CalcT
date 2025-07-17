@@ -54,38 +54,26 @@ class TeeOutput:
         self.log_file.close()
         sys.stdout = self.terminal
 
-class SimulacaoBarragem:
+class SimulacaoBarragemR2:
     def __init__(self, config_file, json_file, log_file="log_simulacao.md"):
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
-        
-        # Armazena o caminho do arquivo de configuração
         self.config_file = config_file
-        
-        self.logger = TeeOutput(log_file)
-        sys.stdout = self.logger
+        self.json_file = json_file
+        self.log_file = log_file
+        self._load_config_and_analysis()
 
-        if self.rank == 0:
-            print("="*80)
-            print("🏗️  INICIALIZANDO SIMULAÇÃO DE BARRAGEM STAGE-WISE COM FENICSx (R2)")
-            print("="*80)
-
-        self._load_config(config_file, json_file)
-
-    def _load_config(self, config_file, json_file):
-        if self.rank == 0:
-            print(f"🔄 Carregando configuração de '{config_file}' e análise de '{json_file}'...")
-
-        with open(config_file, 'r', encoding='utf-8') as f:
+    def _load_config_and_analysis(self):
+        """Carrega o YAML de configuração e o JSON de análise pré-processado."""
+        with open(self.config_file, 'r', encoding='utf-8') as f:
             self.config = yaml.safe_load(f)
-        
-        with open(json_file, 'r', encoding='utf-8') as f:
+        with open(self.json_file, 'r', encoding='utf-8') as f:
             self.analysis = json.load(f)
 
         self.theta = self.config['general']['theta']
         
         # Define o diretório de saída dentro da pasta do caso
-        case_dir = Path(config_file).parent
+        case_dir = Path(self.config_file).parent
         self.output_dir = case_dir / self.config['general']['output_dir']
         
         mesh_file_rel = self.config['general']['mesh_file']
@@ -112,11 +100,6 @@ class SimulacaoBarragem:
             if len(self.temp_iniciais_por_camada) > 0:
                 self.temp_inicial = list(self.temp_iniciais_por_camada.values())[0]
 
-        if self.rank == 0:
-            print(f"   ✅ Configuração carregada com sucesso.")
-            print(f"   🌡️ Temperatura Inicial Padrão: {self.temp_inicial}°C")
-            print(f"   📁 Diretório de Saída: {self.output_dir}")
-
     def run(self):
         try:
             self._setup()
@@ -128,16 +111,16 @@ class SimulacaoBarragem:
                 import traceback
                 traceback.print_exc()
         finally:
-            if self.logger:
+            if hasattr(self, 'logger') and self.logger:
                 self.logger.close()
 
     def _setup(self):
         if self.rank == 0:
             print("\n--- FASE DE CONFIGURAÇÃO ---")
         self._load_mesh()
-        self._setup_materials_data() # Etapa 1: Carregar dados
-        self._setup_function_spaces() # Etapa 2: Criar espaços
-        self._assign_materials_to_mesh() # Etapa 3: Atribuir propriedades
+        self._setup_materials_data()
+        self._setup_function_spaces()
+        self._assign_materials_to_mesh()
         os.makedirs(self.output_dir, exist_ok=True)
 
     def _load_mesh(self):
@@ -179,11 +162,8 @@ class SimulacaoBarragem:
         if self.rank == 0:
             print("   ➡️  Definindo espaços de função...")
         
-        # ### ALTERAÇÃO INÍCIO ###
-        # Corrigido: Usar a função 'functionspace' com 's' minúsculo
         self.V = functionspace(self.mesh, ("CG", 1))
         self.V_prop = functionspace(self.mesh, ("DG", 0))
-        # ### ALTERAÇÃO FIM ###
         
         # Funções para armazenar as propriedades que variam espacialmente
         self.k = Function(self.V_prop, name="Condutividade")
@@ -239,42 +219,6 @@ class SimulacaoBarragem:
         if self.rank == 0:
             print(f"   ✅ Propriedades atribuídas. Verificação em: '{prop_file}'")
 
-    def _set_initial_temperature_for_new_elements(self, novos_elementos, temp_por_pg, bloco_1=False):
-        """
-        Atribui a temperatura inicial correta para os elementos ativos do bloco 1 (bloco_1=True),
-        ou apenas para os novos elementos ativos nos demais blocos (bloco_1=False),
-        interpolando para os nós (CG-1) a partir de uma função DG-0.
-        Parâmetros:
-            novos_elementos: array/lista de índices dos elementos (células) a serem inicializados.
-            temp_por_pg: dicionário {pg_id: temperatura_inicial} para cada camada/material.
-            bloco_1: bool, True se for o primeiro bloco (inicialização total), False para demais blocos.
-        """
-        from dolfinx.fem import Function
-        import numpy as np
-        temp_dg0 = Function(self.V_prop)
-        # Inicializa todo o array DG-0 com zero
-        temp_dg0.x.array[:] = 0.0
-        if bloco_1:
-            # Para o bloco 1, inicializa apenas os elementos ativos do bloco 1
-            for pg_id, temp in temp_por_pg.items():
-                cells = self.cell_tags.find(pg_id)
-                # Só atribui para células que estão em novos_elementos (ativos no bloco 1)
-                cells_ativos = np.intersect1d(cells, novos_elementos)
-                temp_dg0.x.array[cells_ativos] = temp
-        else:
-            # Para os demais blocos, inicializa apenas os novos elementos ativos
-            for pg_id, temp in temp_por_pg.items():
-                cells = self.cell_tags.find(pg_id)
-                cells_novos = np.intersect1d(cells, novos_elementos)
-                temp_dg0.x.array[cells_novos] = temp
-        # Interpola para CG-1 (nós)
-        if hasattr(self, 'T'):
-            self.T.interpolate(temp_dg0)
-            self.T_n.interpolate(temp_dg0)
-        else:
-            self.Tp.interpolate(temp_dg0)
-            self.Tp_n.interpolate(temp_dg0)
-
     def _run_simulation_loop(self):
         if self.rank == 0: print("\n--- FASE DE SIMULAÇÃO ---")
         total_steps = 0
@@ -307,6 +251,36 @@ class SimulacaoBarragem:
                 self._update_state()
                 if i % 5 == 0 or i == len(block_time_points) - 1:
                     self._save_results(total_steps, current_time)
+
+    def _set_initial_temperature_for_new_elements(self, novos_elementos, temp_por_pg, bloco_1=False):
+        """
+        Atribui a temperatura inicial correta para os elementos ativos do bloco 1 (bloco_1=True),
+        ou apenas para os novos elementos ativos nos demais blocos (bloco_1=False),
+        interpolando para os nós (CG-1) a partir de uma função DG-0.
+        """
+        temp_dg0 = Function(self.V_prop)
+        # Inicializa todo o array DG-0 com zero
+        temp_dg0.x.array[:] = 0.0
+        if bloco_1:
+            # Para o bloco 1, inicializa apenas os elementos ativos do bloco 1
+            for pg_id, temp in temp_por_pg.items():
+                cells = self.cell_tags.find(pg_id)
+                # Só atribui para células que estão em novos_elementos (ativos no bloco 1)
+                cells_ativos = np.intersect1d(cells, novos_elementos)
+                temp_dg0.x.array[cells_ativos] = temp
+        else:
+            # Para os demais blocos, inicializa apenas os novos elementos ativos
+            for pg_id, temp in temp_por_pg.items():
+                cells = self.cell_tags.find(pg_id)
+                cells_novos = np.intersect1d(cells, novos_elementos)
+                temp_dg0.x.array[cells_novos] = temp
+        # Interpola para CG-1 (nós)
+        if hasattr(self, 'T'):
+            self.T.interpolate(temp_dg0)
+            self.T_n.interpolate(temp_dg0)
+        else:
+            self.Tp.interpolate(temp_dg0)
+            self.Tp_n.interpolate(temp_dg0)
 
     def _solve_timestep(self, dt_val, current_time):
         if self.has_exothermic:
@@ -515,31 +489,15 @@ class SimulacaoBarragem:
             print("\n" + "="*80)
             print("✅ SIMULAÇÃO CONCLUÍDA")
             print(f"   - Resultados salvos em: '{self.output_dir}'")
-            print(f"   - Log de execução salvo em: '{self.logger.log_file.name}'")
 
-
-def main():
+if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(f"❌ USO: python {sys.argv[0]} <caminho_para_pasta_do_caso>")
-        return
+        print(f"USO: python {sys.argv[0]} <caminho_para_pasta_do_caso>")
+        sys.exit(1)
     pasta_caso = Path(sys.argv[1])
-    if not pasta_caso.is_dir():
-        print(f"❌ Diretório do caso não encontrado: {pasta_caso}")
-        return
-    
     caso = pasta_caso.name
     config_file = pasta_caso / f"{caso}.yaml"
     json_file = pasta_caso / f"{caso}-xdmf.json"
-    
-    if not config_file.exists() or not json_file.exists():
-        print(f"❌ Arquivos de entrada não encontrados em '{pasta_caso.resolve()}'")
-        return
-    
-    # Define o arquivo de log dentro da pasta do caso
     log_file = pasta_caso / "log_simulacao.md"
-    
-    sim = SimulacaoBarragem(str(config_file), str(json_file), str(log_file))
+    sim = SimulacaoBarragemR2(str(config_file), str(json_file), str(log_file))
     sim.run()
-
-if __name__ == "__main__":
-    main()

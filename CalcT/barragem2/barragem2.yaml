@@ -18,52 +18,52 @@ camadas_material:
   - nome: "camada_material_1"
     camada: "camada_1"
     material: "fundacao"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 21.0 # °C
 
   - nome: "camada_material_2"
     camada: "camada_1" 
     material: "fundacao"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 22.0 # °C
   
   - nome: "camada_material_3"
     camada: "camada_1"
     material: "fundacao"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 23.0 # °C
   
   - nome: "camada_material_4"
     camada: "camada_1" 
     material: "fundacao"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 24.0 # °C
   
   - nome: "camada_material_5"
     camada: "camada_1"
     material: "concreto_face"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 25.0 # °C
   
   - nome: "camada_material_6"
     camada: "camada_1" 
     material: "concreto_massa"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 26.0 # °C
   
   - nome: "camada_material_7"
     camada: "camada_2"
     material: "concreto_face"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 27.0 # °C
   
   - nome: "camada_material_8"
     camada: "camada_2" 
     material: "concreto_massa"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 28.0 # °C
   
   - nome: "camada_material_9"
     camada: "camada_3"
     material: "concreto_face"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 29.0 # °C
   
   - nome: "camada_material_10"
     camada: "camada_3" 
     material: "concreto_massa"
-    temperatura_inicial: 20.0 # °C
+    temperatura_inicial: 30.0 # °C
   
 # Definição das CAMADAS
 camadas:
