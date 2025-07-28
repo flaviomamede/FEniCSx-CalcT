@@ -26,20 +26,20 @@ TeeOutput
 └── close()                     # Fecha arquivo de log
 ```
 
-#### 2. `SimulacaoBarragem` - Classe Principal
+#### 2. `SimulacaoBarragemR2` - Classe Principal
 ```
 SimulacaoBarragem
 ├── __init__(config_file, json_file, log_file)
-│   └── _load_config(config_file, json_file)    # Carrega YAML e JSON
+│   └── _load_config_and_analysis(config_file, json_file)    # Carrega YAML e JSON
 │
-├── run()                       # MÉTODO PRINCIPAL
+├── run()                      # MÉTODO PRINCIPAL
 │   ├── _setup()               # FASE DE CONFIGURAÇÃO
 │   ├── _run_simulation_loop() # FASE DE SIMULAÇÃO
 │   └── _finalize()            # Finalização
 │
 ├── FASE DE CONFIGURAÇÃO (_setup)
-│   ├── _load_mesh()           # Carrega malha XDMF
-│   ├── _setup_materials_data() # Carrega dados dos materiais
+│   ├── _load_mesh()             # Carrega malha XDMF
+│   ├── _setup_materials_data()  # Carrega dados dos materiais
 │   ├── _setup_function_spaces() # Cria espaços de função
 │   ├── _assign_materials_to_mesh() # Atribui propriedades
 │   └── _set_initial_conditions() # Aplica condições iniciais

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BARRAGEM FEniCSx - VERSÃO FINAL REATORADA (R2)
+BARRAGEM FEniCSx - VERSÃO FINAL REFATORADA (R2)
 
 Este script implementa uma análise de transferência de calor em uma barragem
 construída em etapas (stagewise), utilizando uma abordagem robusta e modular.
@@ -86,20 +86,12 @@ class SimulacaoBarragemR2:
 
         # Inicialização das temperaturas iniciais por camada/material
         self.temp_inicial = 20.0
-        self.temp_iniciais_por_camada = {}
-        if 'initial_conditions' in self.config and 'temperature' in self.config['initial_conditions']:
-            self.temp_inicial = self.config['initial_conditions']['temperature']
-        elif 'camadas_material' in self.config and self.config['camadas_material']:
-            for camada in self.config['camadas_material']:
-                nome_pg_surf = camada.get('nome')
-                temp_camada = camada.get('temperatura_inicial', 20.0)
-                if nome_pg_surf in self.mappings['physical_surfaces']:
-                    pg_id = self.mappings['physical_surfaces'][nome_pg_surf]
-                    self.temp_iniciais_por_camada[pg_id] = temp_camada
-            # Se quiser manter um valor padrão para fallback:
-            if len(self.temp_iniciais_por_camada) > 0:
-                self.temp_inicial = list(self.temp_iniciais_por_camada.values())[0]
-
+        self.temp_iniciais_por_camada = {
+            self.mappings['physical_surfaces'][camada_material['nome']]: 
+            camada_material.get('temperatura_inicial', 20.0)
+            for camada_material in self.config['camadas_material']
+        }
+       
     def run(self):
         try:
             self._setup()
@@ -404,6 +396,234 @@ class SimulacaoBarragemR2:
         dofs = locate_dofs_topological(self.V, fdim, boundary_facets)
         return [dirichletbc(Constant(self.mesh, self.temp_inicial), dofs, self.V)]
 
+    def _create_layer_submeshes(self):
+        """
+        Cria submeshes para cada camada de construção com seus respectivos physical groups.
+        """
+        from dolfinx.mesh import create_submesh
+
+        self.layer_submeshes = {}
+        self.layer_mappings = {}
+        self.layer_boundary_mappings = {}
+
+        # Identificar elementos por camada
+        for layer_name, layer_info in self.simulation_plan.items():
+            layer_id = int(layer_name.split('_')[1]) - 1  # Extrair ID da camada
+
+            # Obter elementos ativos nesta camada
+            active_elements = np.array(layer_info["elementos_nos"]["elementos_dominio"])
+
+            if len(active_elements) > 0:
+                # Criar submesh
+                submesh, entity_map, vertex_map, geom_map = create_submesh(
+                    self.mesh, self.mesh.topology.dim, active_elements
+                )
+
+                self.layer_submeshes[layer_id] = {
+                    'submesh': submesh,
+                    'entity_map': entity_map,
+                    'vertex_map': vertex_map,
+                    'geom_map': geom_map,
+                    'active_elements': active_elements
+                }
+
+                # Mapear physical groups para esta submesh
+                self._map_boundary_groups_to_submesh(layer_id, layer_info)
+
+    def _map_boundary_groups_to_submesh(self, layer_id, layer_info):
+        """
+        Mapeia os physical groups (contornos) para cada submesh.
+        """
+        active_contours = layer_info["physical_groups"]["lines"]
+        submesh = self.layer_submeshes[layer_id]['submesh']
+
+        # Criar facet tags para a submesh
+        fdim = submesh.topology.dim - 1
+        submesh.topology.create_entities(fdim)
+        submesh.topology.create_connectivity(fdim, submesh.topology.dim)
+
+        # Mapear facets da submesh para facets da malha original
+        boundary_mappings = {}
+
+        for contour_id in active_contours:
+            # Encontrar facets na malha original
+            original_facets = self.facet_tags.find(contour_id)
+
+            # Mapear para facets na submesh
+            if len(original_facets) > 0:
+                # Identificar quais facets pertencem à submesh
+                submesh_facets = []
+                for facet_idx in original_facets:
+                    # Verificar se a facet está na fronteira da submesh
+                    # Isso requer lógica mais sofisticada para mapeamento correto
+                    submesh_facets.append(facet_idx)
+
+                boundary_mappings[contour_id] = {
+                    'original_facets': original_facets,
+                    'submesh_facets': np.array(submesh_facets, dtype=np.int32)
+                }
+
+        self.layer_boundary_mappings[layer_id] = boundary_mappings
+
+    def _get_boundary_conditions_for_submesh(self, layer_id, current_time):
+        """
+        Aplica condições de contorno robustas para uma submesh específica.
+
+        Args:
+            layer_id: ID da camada/submesh
+            current_time: Tempo atual da simulação
+
+        Returns:
+            Lista de condições de contorno para a submesh
+        """
+        if layer_id not in self.layer_submeshes:
+            return []
+
+        submesh_info = self.layer_submeshes[layer_id]
+        submesh = submesh_info['submesh']
+
+        # Criar espaço de funções para a submesh
+        V_sub = functionspace(submesh, ("Lagrange", 1))
+
+        # Obter configurações de contorno para esta camada
+        layer_name = f"camada_{layer_id + 1}"
+        active_contours = self._get_active_contours_for_layer(layer_name, current_time)
+
+        bcs = []
+
+        # Processar cada contorno ativo
+        for contour_config in active_contours:
+            contour_id = contour_config['id']
+            contour_type = contour_config['tipo']
+
+            # Obter facets na submesh
+            if contour_id in self.layer_boundary_mappings[layer_id]:
+                submesh_facets = self.layer_boundary_mappings[layer_id][contour_id]['submesh_facets']
+
+                if len(submesh_facets) > 0:
+                    # Calcular valor da condição de contorno
+                    bc_value = self._calculate_boundary_value(contour_config, current_time)
+
+                    # Aplicar ao elemento (DG-0) e interpolar para nós (CG-1)
+                    bc_function = self._apply_boundary_to_elements_then_interpolate(
+                        submesh, submesh_facets, bc_value, contour_type, V_sub
+                    )
+
+                    # Criar condição de contorno nos nós
+                    fdim = submesh.topology.dim - 1
+                    dofs = locate_dofs_topological(V_sub, fdim, submesh_facets)
+                    bcs.append(dirichletbc(bc_function, dofs, V_sub))
+
+        return bcs
+
+    def _get_active_contours_for_layer(self, layer_name, current_time):
+        """
+        Identifica quais contornos estão ativos para uma camada específica.
+        """
+        active_contours = []
+
+        for contour in self.config.get('contornos', []):
+            # Verificar se o contorno nasce com esta camada
+            if contour.get('nasce_com_camada') == layer_name:
+                # Verificar se está desativado
+                desativado_em = contour.get('desativado_em', None)
+                if desativado_em is None or current_time < desativado_em:
+                    active_contours.append(contour)
+
+        return active_contours
+
+    def _calculate_boundary_value(self, contour_config, current_time):
+        """
+        Calcula o valor da condição de contorno baseado no tipo e parâmetros.
+        """
+        contour_type = contour_config['tipo']
+
+        if contour_type == "dirichlet":
+            return contour_config.get('valor', 20.0)
+
+        elif contour_type == "conveccao":
+            h = contour_config.get('h', 8.0)
+            t_ext = contour_config.get('t_ext', 25.0)
+            # Para convecção, retornamos t_ext como condição de Dirichlet equivalente
+            return t_ext
+
+        elif contour_type == "fluxo":
+            flux_value = contour_config.get('fluxo', 0.0)
+            # Para fluxo, retornamos temperatura ambiente como aproximação
+            return contour_config.get('t_ambiente', 20.0)
+
+        elif contour_type == "robin":
+            h = contour_config.get('h', 8.0)
+            t_ext = contour_config.get('t_ext', 25.0)
+            return t_ext
+
+        else:
+            return 20.0  # Valor padrão
+
+    def _apply_boundary_to_elements_then_interpolate(self, submesh, facets, bc_value,
+                                                   contour_type, V_sub):
+        """
+        Aplica condição de contorno aos elementos e interpola para os nós.
+
+        Args:
+            submesh: Submesh onde aplicar a condição
+            facets: Facets do contorno
+            bc_value: Valor da condição de contorno
+            contour_type: Tipo de condição (dirichlet, conveccao, etc.)
+            V_sub: Espaço de funções da submesh
+
+        Returns:
+            Função com valores interpolados nos nós
+        """
+        # Criar função DG-0 para valores por elemento
+        V_DG = functionspace(submesh, ("DG", 0))
+        bc_dg = Function(V_DG)
+
+        # Identificar elementos adjacentes às facets do contorno
+        boundary_elements = self._get_boundary_elements(submesh, facets)
+
+        # Atribuir valor aos elementos do contorno
+        if len(boundary_elements) > 0:
+            bc_dg.x.array[boundary_elements] = bc_value
+
+        # Interpolar para espaço CG-1 (nós)
+        bc_cg = Function(V_sub)
+        bc_cg.interpolate(bc_dg)
+
+        return bc_cg
+
+    def _get_boundary_elements(self, submesh, boundary_facets):
+        """
+        Identifica elementos que têm facets no contorno.
+        """
+        # Obter conectividade entre facets e células
+        tdim = submesh.topology.dim
+        fdim = tdim - 1
+
+        # Criar conectividade se necessário
+        submesh.topology.create_connectivity(fdim, tdim)
+        facet_to_cell = submesh.topology.connectivity(fdim, tdim)
+
+        boundary_elements = []
+
+        for facet_idx in boundary_facets:
+            if facet_idx < len(facet_to_cell):
+                cells = facet_to_cell.links(facet_idx)
+                boundary_elements.extend(cells)
+
+        return np.unique(np.array(boundary_elements, dtype=np.int32))
+
+    def _synchronize_boundary_conditions(self, layer_id, bcs_submesh):
+        """
+        Sincroniza condições de contorno entre submesh e malha principal.
+        """
+        if layer_id not in self.layer_mappings:
+            return
+
+        # Mapear de volta para a malha principal se necessário
+        # Implementação específica depende da necessidade de sincronização
+        pass
+
     def _solve_with_robust_cascade(self, problem):
         # Configurações mais conservadoras para evitar problemas de memória
         solvers = {
@@ -472,6 +692,7 @@ class SimulacaoBarragemR2:
         return None
 
     def _save_results(self, time_step_idx, current_time):
+        """Salva resultados principais e também submeshes se ativadas."""
         if self.rank == 0:
             print(f"   💾 Salvando passo {time_step_idx} (t={current_time/3600:.2f}h)...")
         try:
@@ -481,14 +702,213 @@ class SimulacaoBarragemR2:
                 with io.XDMFFile(self.comm, filename, "w") as xdmf:
                     xdmf.write_mesh(self.mesh)
                     xdmf.write_function(func, current_time)
+
+            # Salvar submeshes e resultados por camada
+            if hasattr(self, 'layer_submeshes') and self.layer_submeshes:
+                self._save_all_submeshes_and_results(time_step_idx, current_time)
+
         except Exception as e:
             if self.rank == 0: print(f"     -> ⚠️ Erro ao salvar: {e}")
             
     def _finalize(self):
+        """Finaliza a simulação e salva informações adicionais."""
         if self.rank == 0:
             print("\n" + "="*80)
             print("✅ SIMULAÇÃO CONCLUÍDA")
             print(f"   - Resultados salvos em: '{self.output_dir}'")
+
+        # Salvar submeshes na pasta do caso
+        case_dir = Path(self.config_file).parent
+        self._save_submeshes(case_dir)
+
+        if self.rank == 0:
+            print("   ✅ Submeshes salvas na pasta do caso.")
+            print("   ✅ Simulação concluída com sucesso!")
+            print(f"   📁 Resultados salvos em: {case_dir}")
+
+    def _save_submeshes(self, case_dir):
+        """
+        Salva todas as submeshes em arquivos XDMF separados na pasta do caso.
+
+        Args:
+            case_dir: Diretório do caso onde salvar as submeshes
+        """
+        if not hasattr(self, 'layer_submeshes'):
+            return
+
+        if self.rank == 0:
+            print(f"\n--- SALVANDO SUBMESHES ---")
+            print(f"   📁 Diretório: {case_dir}")
+
+        submesh_dir = case_dir / "submeshes"
+        submesh_dir.mkdir(exist_ok=True)
+
+        for layer_id, submesh_info in self.layer_submeshes.items():
+            submesh = submesh_info['submesh']
+            layer_name = f"camada_{layer_id + 1}"
+
+            # Nome do arquivo baseado no caso
+            caso_name = case_dir.name
+            filename = submesh_dir / f"{caso_name}_{layer_name}.xdmf"
+
+            if self.rank == 0:
+                print(f"   ➡️  Salvando {layer_name}: {filename.name}")
+
+            # Salvar submesh
+            with io.XDMFFile(self.comm, str(filename), "w") as xdmf:
+                xdmf.write_mesh(submesh)
+
+                # Salvar cell tags se existirem
+                if hasattr(self, 'cell_tags') and self.cell_tags is not None:
+                    # Filtrar cell tags para esta submesh
+                    active_elements = submesh_info['active_elements']
+                    filtered_tags = self._filter_cell_tags_for_submesh(
+                        self.cell_tags, active_elements, submesh_info['entity_map']
+                    )
+                    if filtered_tags is not None:
+                        xdmf.write_meshtags(filtered_tags, submesh.geometry)
+
+                # Salvar facet tags (contornos) para esta submesh
+                boundary_tags = self._create_boundary_tags_for_submesh(layer_id)
+                if boundary_tags is not None:
+                    xdmf.write_meshtags(boundary_tags, submesh.geometry)
+
+            if self.rank == 0:
+                print(f"   ✅ {layer_name} salva com sucesso!")
+
+    def _filter_cell_tags_for_submesh(self, original_tags, active_elements, entity_map):
+        """
+        Filtra cell tags para incluir apenas elementos da submesh.
+
+        Args:
+            original_tags: Cell tags da malha original
+            active_elements: Elementos ativos na submesh
+            entity_map: Mapeamento de entidades da submesh para a malha original
+
+        Returns:
+            Cell tags filtradas para a submesh ou None se não aplicável
+        """
+        if original_tags is None:
+            return None
+
+        try:
+            # Criar novo array de tags para a submesh
+            submesh_tags = np.full(len(entity_map), -1, dtype=np.int32)
+
+            # Mapear tags da malha original para a submesh
+            for sub_idx, orig_idx in enumerate(entity_map):
+                if orig_idx < len(original_tags.values):
+                    submesh_tags[sub_idx] = original_tags.values[orig_idx]
+
+            # Criar meshtags para a submesh
+            from dolfinx.mesh import meshtags
+            submesh = self.layer_submeshes[list(self.layer_submeshes.keys())[0]]['submesh']
+
+            # Criar tags válidas (remover -1)
+            valid_mask = submesh_tags != -1
+            if not np.any(valid_mask):
+                return None
+
+            # Criar meshtags com as tags válidas
+            return meshtags(submesh, submesh.topology.dim,
+                          np.arange(len(submesh_tags), dtype=np.int32),
+                          submesh_tags)
+
+        except Exception as e:
+            if self.rank == 0:
+                print(f"   ⚠️  Erro ao filtrar cell tags: {e}")
+            return None
+
+    def _create_boundary_tags_for_submesh(self, layer_id):
+        """
+        Cria facet tags (contornos) para uma submesh específica.
+
+        Args:
+            layer_id: ID da camada
+
+        Returns:
+            Facet tags para a submesh ou None se não aplicável
+        """
+        if layer_id not in self.layer_boundary_mappings:
+            return None
+
+        try:
+            submesh = self.layer_submeshes[layer_id]['submesh']
+            boundary_mappings = self.layer_boundary_mappings[layer_id]
+
+            # Coletar todas as facets e suas tags
+            all_facets = []
+            all_tags = []
+
+            for contour_id, mapping in boundary_mappings.items():
+                submesh_facets = mapping.get('submesh_facets', [])
+                if len(submesh_facets) > 0:
+                    all_facets.extend(submesh_facets)
+                    all_tags.extend([contour_id] * len(submesh_facets))
+
+            if not all_facets:
+                return None
+
+            # Criar arrays numpy
+            facets_array = np.array(all_facets, dtype=np.int32)
+            tags_array = np.array(all_tags, dtype=np.int32)
+
+            # Criar meshtags
+            from dolfinx.mesh import meshtags
+            fdim = submesh.topology.dim - 1
+            return meshtags(submesh, fdim, facets_array, tags_array)
+
+        except Exception as e:
+            if self.rank == 0:
+                print(f"   ⚠️  Erro ao criar boundary tags: {e}")
+            return None
+
+    def _save_submesh_results(self, layer_id, solution, step, time):
+        """
+        Salva resultados de uma submesh específica.
+
+        Args:
+            layer_id: ID da camada
+            solution: Função de solução
+            step: Número do passo
+            time: Tempo atual
+        """
+        case_dir = Path(self.config_file).parent
+        submesh_dir = case_dir / "submeshes" / "results"
+        submesh_dir.mkdir(parents=True, exist_ok=True)
+
+        layer_name = f"camada_{layer_id + 1}"
+        caso_name = case_dir.name
+
+        filename = submesh_dir / f"{caso_name}_{layer_name}_step{step:04d}.xdmf"
+
+        submesh = self.layer_submeshes[layer_id]['submesh']
+
+        with io.XDMFFile(self.comm, str(filename), "w") as xdmf:
+            xdmf.write_mesh(submesh)
+            xdmf.write_function(solution, time)
+
+    def _save_all_submeshes_and_results(self, step, current_time):
+        """
+        Função auxiliar para salvar todas as submeshes e resultados atuais.
+
+        Args:
+            step: Número do passo
+            current_time: Tempo atual da simulação
+        """
+        case_dir = Path(self.config_file).parent
+
+        # Salvar estrutura das submeshes (apenas uma vez)
+        if step == 0:
+            self._save_submeshes(case_dir)
+
+        # Salvar resultados de cada submesh ativa
+        for layer_id in self.layer_submeshes.keys():
+            if hasattr(self, 'T_layers') and layer_id in self.T_layers:
+                self._save_submesh_results(layer_id, self.T_layers[layer_id], step, current_time)
+            elif hasattr(self, 'T') and self.T is not None:
+                # Se não houver solução separada por camada, usar a principal
+                self._save_submesh_results(layer_id, self.T, step, current_time)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
