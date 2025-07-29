@@ -6,6 +6,11 @@ Gera arquivo mesh_readed.md com informações detalhadas das variáveis
 
 import os
 import sys
+
+# Adicionar caminhos do sistema para FEniCSx
+sys.path.insert(0, '/usr/lib/petscdir/petsc3.19/x86_64-linux-gnu-real/lib/python3/dist-packages')
+sys.path.insert(0, '/usr/lib/python3/dist-packages')
+
 import json
 import yaml
 import datetime
@@ -118,43 +123,51 @@ class MeshDebugger(SimulacaoBarragemR2):
             # NOVA SEÇÃO: LIGAÇÕES HIERÁRQUICAS
             f.write("\n## 6. LIGAÇÕES HIERÁRQUICAS\n\n")
             
-            # Separar PG de superfícies e lines
-            surface_pgs = [tag for tag in unique_tags if tag <= 10]  # PG 1-10 são superfícies
-            line_pgs = [tag for tag in unique_facet_tags if tag >= 11]  # PG 11+ são lines
+            # DETECÇÃO AUTOMÁTICA: Separar PG por tipo de tag
+            # cell_tags = PGs de células (superfícies)
+            # facet_tags = PGs de facetas (linhas)
+            surface_pgs = list(unique_tags)  # Todos os cell_tags são superfícies
+            line_pgs = list(unique_facet_tags)  # Todos os facet_tags são linhas
             
-            f.write("### PG-Superfícies\n\n")
-            for pg in sorted(surface_pgs):
-                elements = self.cell_tags.find(pg)
-                f.write(f"**PG {pg}:**\n")
-                f.write(f"  - **Elementos:** {len(elements)} elementos\n")
-                f.write(f"  - **Índices dos elementos:** {elements}\n")
-                
-                # Encontrar nós únicos dos elementos
-                unique_nodes = set()
-                for elem_idx in elements:
-                    # Obter vértices do elemento
-                    cell_vertices = self.mesh.topology.connectivity(self.mesh.topology.dim, 0).links(elem_idx)
-                    unique_nodes.update(cell_vertices)
-                
-                f.write(f"  - **Nós:** {len(unique_nodes)} nós únicos\n")
-                f.write(f"  - **Índices dos nós:** {sorted(unique_nodes)}\n\n")
+            f.write("### PG-Superfícies (detectadas automaticamente)\n\n")
+            if surface_pgs:
+                for pg in sorted(surface_pgs):
+                    elements = self.cell_tags.find(pg)
+                    f.write(f"**PG {pg}:**\n")
+                    f.write(f"  - **Elementos:** {len(elements)} elementos\n")
+                    f.write(f"  - **Índices dos elementos:** {elements}\n")
+                    
+                    # Encontrar nós únicos dos elementos
+                    unique_nodes = set()
+                    for elem_idx in elements:
+                        # Obter vértices do elemento
+                        cell_vertices = self.mesh.topology.connectivity(self.mesh.topology.dim, 0).links(elem_idx)
+                        unique_nodes.update(cell_vertices)
+                    
+                    f.write(f"  - **Nós:** {len(unique_nodes)} nós únicos\n")
+                    f.write(f"  - **Índices dos nós:** {sorted(unique_nodes)}\n\n")
+            else:
+                f.write("**Nenhuma superfície detectada.**\n\n")
             
-            f.write("### PG-Lines\n\n")
-            for pg in sorted(line_pgs):
-                facets = self.facet_tags.find(pg)
-                f.write(f"**PG {pg}:**\n")
-                f.write(f"  - **Facetas:** {len(facets)} facetas\n")
-                f.write(f"  - **Índices das facetas:** {facets}\n")
-                
-                # Encontrar nós únicos das facetas
-                unique_nodes = set()
-                for facet_idx in facets:
-                    # Obter vértices da faceta
-                    facet_vertices = self.mesh.topology.connectivity(self.mesh.topology.dim-1, 0).links(facet_idx)
-                    unique_nodes.update(facet_vertices)
-                
-                f.write(f"  - **Nós:** {len(unique_nodes)} nós únicos\n")
-                f.write(f"  - **Índices dos nós:** {sorted(unique_nodes)}\n\n")
+            f.write("### PG-Lines (detectadas automaticamente)\n\n")
+            if line_pgs:
+                for pg in sorted(line_pgs):
+                    facets = self.facet_tags.find(pg)
+                    f.write(f"**PG {pg}:**\n")
+                    f.write(f"  - **Facetas:** {len(facets)} facetas\n")
+                    f.write(f"  - **Índices das facetas:** {facets}\n")
+                    
+                    # Encontrar nós únicos das facetas
+                    unique_nodes = set()
+                    for facet_idx in facets:
+                        # Obter vértices da faceta
+                        facet_vertices = self.mesh.topology.connectivity(self.mesh.topology.dim-1, 0).links(facet_idx)
+                        unique_nodes.update(facet_vertices)
+                    
+                    f.write(f"  - **Nós:** {len(unique_nodes)} nós únicos\n")
+                    f.write(f"  - **Índices dos nós:** {sorted(unique_nodes)}\n\n")
+            else:
+                f.write("**Nenhuma linha detectada.**\n\n")
             
             # Informações adicionais
             f.write("\n## Informações Adicionais\n\n")

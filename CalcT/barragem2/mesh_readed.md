@@ -1,6 +1,6 @@
 # DEBUG - VARIÁVEIS DA FUNÇÃO _load_mesh()
 
-**Data/Hora:** 2025-07-28 12:22:00
+**Data/Hora:** 2025-07-28 21:41:23
 **Arquivo de malha:** barragem2/barragem2.xdmf
 
 ## 1. self.mesh
@@ -92,7 +92,7 @@
 
 ## 6. LIGAÇÕES HIERÁRQUICAS
 
-### PG-Superfícies
+### PG-Superfícies (detectadas automaticamente)
 
 **PG 1:**
   - **Elementos:** 8 elementos
@@ -154,7 +154,7 @@
   - **Nós:** 9 nós únicos
   - **Índices dos nós:** [39, 41, 44, 46, 47, 49, 52, 53, 56]
 
-### PG-Lines
+### PG-Lines (detectadas automaticamente)
 
 **PG 11:**
   - **Facetas:** 12 facetas
@@ -225,7 +225,7 @@
 
 ## Informações Adicionais
 
-**Comm MPI:** <mpi4py.MPI.Intracomm object at 0x72d6c5f82370>
+**Comm MPI:** <mpi4py.MPI.Intracomm object at 0x70a4d819dec0>
 **Rank:** 0
 **Size:** 1
 
